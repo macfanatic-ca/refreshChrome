@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Current User
+#USER=`who | grep console | awk '{print $1}'`
+# Listed User(s)
+USERS=(user1 user2)
+installDir=`dirname $0`
+
+for USER in ${USERS[@]};
+do
+if [ ! -d /Users/$USER/Library/LaunchAgents/ ]; then
+    mkdir -p /Users/$USER/Library/LaunchAgents/
+fi
+
+echo "copying launch agent for $USER"
+cp $installDir/ca.macfanatic.refreshChrome.plist /Users/$USER/Library/LaunchAgents/
+if [ $? == 0 ]; then
+    echo "launch agent copied for $USER"
+else
+    echo "FAILED copying launch agent for $USER"
+    exit 1
+fi
+echo "setting permission on launch agent for $USER"
+chown $USER /Users/$USER/Library/LaunchAgents/ca.macfanatic.refreshChrome.plist
+if [ $? == 0 ]; then
+    echo "permissions set on launch agent for $USER"
+else
+    echo "FAILED setting permissions on launch agent for $USER"
+    exit 2
+fi
+done
+exit 0
